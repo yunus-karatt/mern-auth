@@ -68,6 +68,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 // GET /api/users/profile
 // private
 const getUserProfile = asyncHandler(async (req, res) => {
+  console.log(req)
   const user = {
     _id: req.user._id,
     name: req.user.name,
