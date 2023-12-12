@@ -18,6 +18,7 @@ import ProfileScreen from "./screens/ProfileScreen.jsx";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminLoginScreen from "./screens/AdminLoginScreen.jsx";
 import Dashboard from "./screens/Dashboard.jsx";
+import UpdateUserData from "./screens/UpdateUserData.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,6 +34,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="/admin" element={<AdminLoginScreen /> } />
       <Route path="/admin/dashboard" element={<Dashboard />}/>
+      <Route path="/admin/user/update-user/:id" element={<UpdateUserData />}/>
     </Route>
   )
 );

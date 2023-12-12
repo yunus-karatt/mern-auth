@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import e from "express";
+import { boolean } from "webidl-conversions";
 
 const userSchema = mongoose.Schema(
   {
@@ -19,8 +20,12 @@ const userSchema = mongoose.Schema(
     },
     avatar:{
       type: String,
-      default: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+      default: "profile.png"
     },
+    isBlocked:{
+      type:Boolean,
+      default:false
+    }
   },
   {
     timestamps: true,

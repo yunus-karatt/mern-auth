@@ -42,4 +42,44 @@ const getUserData = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerAdmin, authAdmin, getUserData, logout };
+const updateUserAccess = asyncHandler(async (req, res) => {
+  const _id = req.query.id;
+  const user = await User.findById(_id);
+  if (user) {
+    user.isBlocked = !user.isBlocked;
+    const updatedUser = await user.save();
+    res.status(200).json(updatedUser);
+  } else {
+    res.status(404);
+    throw new Error("user not found");
+  }
+});
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const _id = req.query.id;
+  await User.deleteOne({ _id });
+  res.status(200).json({ deleted: true });
+});
+
+const updateUserData = asyncHandler(async(req, res) => {
+  const { email, name,_id } = req.body;
+  await User.updateOne({_id},{$set:{name,email}})
+  res.status(200).json({updated:true})
+});
+
+const getUserToUpdate = asyncHandler(async (req, res) => {
+  const _id = req.params.id;
+  const user = await User.findOne({ _id }, { _id: 1, name: 1, email: 1 });
+  res.status(200).json(user);
+});
+
+export {
+  registerAdmin,
+  authAdmin,
+  getUserData,
+  logout,
+  updateUserAccess,
+  deleteUser,
+  updateUserData,
+  getUserToUpdate,
+};

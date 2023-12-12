@@ -18,6 +18,7 @@ const adminAuthSlice = createSlice({
       state.adminInfo = null;
       localStorage.removeItem("adminInfo");
     },
+   
   },
 });
 

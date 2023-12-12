@@ -10,7 +10,7 @@ import { useNavigate } from "react-router";
 
 function AdminHeader() {
   const {adminInfo }= useSelector((state) => state.adminAuth);
- 
+  
   const dispatch=useDispatch()
   const navigate= useNavigate()
   const [adminLogoutApiCall]=useAdminLogoutMutation()

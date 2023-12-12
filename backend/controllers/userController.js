@@ -10,6 +10,10 @@ import path from "path";
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
+  if(user.isBlocked){
+    res.status(401)
+    throw new Error('You are blocked. Please contact Admins')
+  }
 
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
+
 function AdminLoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -64,11 +65,6 @@ function AdminLoginScreen() {
             Sign In
           </Button>
         </div>
-        <Row className="py-3">
-          <Col>
-            New Customer ? <Link to="/register">Register</Link>{" "}
-          </Col>
-        </Row>
       </Form>
     </FormContainer>
   );
