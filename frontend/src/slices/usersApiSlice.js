@@ -24,11 +24,15 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     updateUser: builder.mutation({
-      query: (data) => ({
-        url: `${USERS_URL}/profile`,
-        method: "PUT",
-        body: data,
-      }),
+      query: (data) => {
+        console.log(data);
+        return{
+
+          url: `${USERS_URL}/profile`,
+          method: "PUT",
+          body: data,
+        }
+      },
     }),
   }),
 });

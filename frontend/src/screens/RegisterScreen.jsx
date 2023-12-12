@@ -7,6 +7,7 @@ import { useRegisterMutation } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
+import Oauth from "../components/Oauth";
 
 const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -84,10 +85,12 @@ const RegisterScreen = () => {
           ></Form.Control>
         </Form.Group>
         {isLoading && <Loader />}
-        <Button type="submit" variant="primary" className="mt-3">
-          Sign Up
-        </Button>
-
+        <div className="d-grid gap-2">
+          <Button type="submit" variant="primary" className="mt-3" >
+            Sign Up
+          </Button>
+        </div>
+        <Oauth/>
         <Row className="py-3">
           <Col>
             Already have an account ? <Link to="/login">Login</Link>{" "}

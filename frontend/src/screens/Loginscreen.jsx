@@ -7,6 +7,7 @@ import { useLoginMutation } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
 import {toast} from 'react-toastify'
 import Loader from "../components/Loader";
+import Oauth from "../components/Oauth";
 
 const Loginscreen = () => {
   const [email, setEmail] = useState("");
@@ -59,10 +60,13 @@ const Loginscreen = () => {
           ></Form.Control>
         </Form.Group>
         {isLoading && <Loader/> }
+        <div className="d-grid gap-2">
+
         <Button type="submit" variant="primary" className="mt-3">
           Sign In
         </Button>
-
+        </div>
+        <Oauth />
         <Row className="py-3">
           <Col>
             New Customer ? <Link to="/register">Register</Link>{" "}

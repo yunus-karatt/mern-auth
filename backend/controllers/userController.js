@@ -1,6 +1,8 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
+import fs from 'fs'
+import path from "path";
 
 // Auth user/set token
 // POST /api/users/auth
@@ -15,6 +17,7 @@ const authUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      avatar:user.avatar
     });
   } else {
     res.status(401);
@@ -46,6 +49,7 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      avatar:user.avatar
     });
   } else {
     res.status(400);
@@ -68,7 +72,6 @@ const logoutUser = asyncHandler(async (req, res) => {
 // GET /api/users/profile
 // private
 const getUserProfile = asyncHandler(async (req, res) => {
-  console.log(req)
   const user = {
     _id: req.user._id,
     name: req.user.name,
@@ -82,26 +85,78 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // PuT /api/users/profile
 // private
 const updateUserProfile = asyncHandler(async (req, res) => {
-    const user=await User.findById(req.user._id);
-    if(user){
-      user.name=req.body.name||user.name
-      user.email=req.body.email||user.email
+  const user = await User.findById(req.user._id);
+  // console.log(req.file)
+  if (user) {
+    if(req.file){
+      const filePath=path.join('backend','public','images',user.avatar)
 
-      if(req.body.password){
-        user.password=req.body.password
-      }
-
-      const updatedUser=await user.save()
-      res.status(200).json({
-        _id:updatedUser._id,
-        name:updatedUser.name,
-        email:updatedUser.email,
+      fs.unlink(filePath,(err)=>{
+        if(err)console.log(err)
       })
-    }else{
-      res.status(404);
-      throw new Error('user not found')
+      
+      user.avatar=req.file.filename
     }
+    
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+
+    const updatedUser = await user.save();
+    res.status(200).json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      avatar:updatedUser.avatar
+    });
+  } else {
+    res.status(404);
+    throw new Error("user not found");
+  }
 });
+
+const google = async (req, res, next) => {
+  try {
+    const user =await User.findOne({ email: req.body.email });
+    
+    if (user) {
+      generateToken(res, user._id);
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar:user.avatar
+      });
+    } else {
+      const generatedPassword = Math.random().toString(36).slice(-8);
+      const user = await User.create({
+        name: req.body.name.split(" ").join("").toLowerCase(),
+        email: req.body.email,
+        password: generatedPassword,
+        avatar:req.body.avatar
+      });
+      if (user) {
+        generateToken(res, user._id);
+
+        res.status(201).json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          avatar:user.avatar
+        });
+      } else {
+        res.status(400);
+        throw new Error("Invalid user data");
+      }
+    }
+  } catch (error) {
+    res.status(400);
+    throw new Error("Invalid user data", error);
+  }
+};
 
 export {
   authUser,
@@ -109,4 +164,5 @@ export {
   logoutUser,
   getUserProfile,
   updateUserProfile,
+  google,
 };
