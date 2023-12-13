@@ -90,7 +90,6 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // private
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
-  // console.log(req.file)
   if (user) {
     if(req.file){
       const filePath=path.join('backend','public','images',user.avatar)

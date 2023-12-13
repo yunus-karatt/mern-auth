@@ -8,12 +8,15 @@ import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import ModalPopper from "../components/ModalPopper";
 
 function Dashboard() {
   const dispatch = useDispatch();
 
   const [search,setSearch]=useState('')
   const [users, setUsers] = useState([]);
+  const [show,setShow]=useState(false)
+  const [deleteId,setDeleteId]=useState('')
 
   const [getUsersList] = useGetUserDataMutation();
   const [updateUserAccess] = useUpdateUserAccessMutation();
@@ -27,6 +30,15 @@ function Dashboard() {
     fetchData();
   }, []);
 
+  const handleClose=()=>{
+    setShow(false)
+    setDeleteId('')
+  }
+  const handleShow=(id)=>{
+    setDeleteId(id)
+    setShow(true)
+  }
+
   const handleBlockAndUnblock = async (id) => {
     const res = await updateUserAccess(id).unwrap();
     const updatedState = users.map((user) => {
@@ -38,10 +50,13 @@ function Dashboard() {
     setUsers(updatedState);
   };
 
-  const handleDelete = async (id) => {
-    await deleteUser(id);
-    const updatedState = users.filter((user) => user._id !== id);
+  const handleDelete = async () => {
+    
+
+    await deleteUser(deleteId);
+    const updatedState = users.filter((user) => user._id !== deleteId);
     setUsers(updatedState);
+    setShow(false)
   };
   
   const filterdUser=users?.filter(user=>{
@@ -54,6 +69,7 @@ function Dashboard() {
 
   return (
     <Container>
+      <ModalPopper show={show} handleClose={handleClose} handleDelete={handleDelete} />
       <Form.Group
         className="mt-3 mt-5 d-flex align-items-center"
         controlId="searchForm"
@@ -115,7 +131,7 @@ function Dashboard() {
                 </td>
                 <td>
                   <Button
-                    onClick={() => handleDelete(user._id)}
+                    onClick={() => handleShow(user._id)}
                     variant="danger"
                   >
                     Delete
