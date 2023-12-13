@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
-import {toast} from 'react-toastify'
+import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 import Oauth from "../components/Oauth";
 
@@ -20,20 +20,32 @@ const Loginscreen = () => {
 
   const { userInfo } = useSelector((state) => state.auth);
 
-  useEffect(()=>{
-    if(userInfo){
-        navigate('/')
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
     }
-  },[navigate,userInfo])
+  }, [navigate, userInfo]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    if (!email || !password) {
+      toast.error("Fields can't be empty");
+      return;
+    } else if (password.length < 8) {
+      toast.error("Please enter a valid 8 charecter password");
+      return;
+    } else if (
+      !email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+    ) {
+      toast.error("Please enter a valid email address!");
+      return;
+    }
     try {
-      const res= await login({email,password}).unwrap();
-      dispatch(setCredentials({...res}))
-      navigate('/')
+      const res = await login({ email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate("/");
     } catch (error) {
-      toast.error(error?.data?.message||error.error)
+      toast.error(error?.data?.message || error.error);
     }
   };
 
@@ -59,12 +71,11 @@ const Loginscreen = () => {
             onChange={(e) => setPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
-        {isLoading && <Loader/> }
+        {isLoading && <Loader />}
         <div className="d-grid gap-2">
-
-        <Button type="submit" variant="primary" className="mt-3">
-          Sign In
-        </Button>
+          <Button type="submit" variant="primary" className="mt-3">
+            Sign In
+          </Button>
         </div>
         <Oauth />
         <Row className="py-3">

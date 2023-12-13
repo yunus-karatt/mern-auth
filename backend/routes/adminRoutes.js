@@ -7,7 +7,8 @@ import {
   updateUserAccess,
   deleteUser,
   updateUserData,
-  getUserToUpdate
+  getUserToUpdate,
+  addUser
 } from "../controllers/adminController.js";
 import { protectAdminRoutes } from "../middleware/adminAuthMiddleware.js";
 
@@ -16,6 +17,7 @@ const router = express.Router();
 router.post("/register", registerAdmin);
 router.post("/", authAdmin);
 router.post("/logout", logout);
+router.post("/users/add-user",protectAdminRoutes,addUser)
 
 router.get("/dashboard", protectAdminRoutes, getUserData);
 router.get('/update-user-data/:id',protectAdminRoutes,getUserToUpdate)

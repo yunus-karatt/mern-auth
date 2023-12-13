@@ -61,16 +61,38 @@ const deleteUser = asyncHandler(async (req, res) => {
   res.status(200).json({ deleted: true });
 });
 
-const updateUserData = asyncHandler(async(req, res) => {
-  const { email, name,_id } = req.body;
-  await User.updateOne({_id},{$set:{name,email}})
-  res.status(200).json({updated:true})
+const updateUserData = asyncHandler(async (req, res) => {
+  const { email, name, _id } = req.body;
+  await User.updateOne({ _id }, { $set: { name, email } });
+  res.status(200).json({ updated: true });
 });
 
 const getUserToUpdate = asyncHandler(async (req, res) => {
   const _id = req.params.id;
   const user = await User.findOne({ _id }, { _id: 1, name: 1, email: 1 });
   res.status(200).json(user);
+});
+
+const addUser = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    res.status(400);
+    throw new Error("User already exists");
+  }
+
+  const user = await User.create({
+    name,
+    email,
+    password,
+  });
+
+  if (user) {
+    res.status(201).json({userAdded:true});
+  } else {
+    res.status(400);
+    throw new Error("Invalid user data");
+  }
 });
 
 export {
@@ -82,4 +104,5 @@ export {
   deleteUser,
   updateUserData,
   getUserToUpdate,
+  addUser,
 };

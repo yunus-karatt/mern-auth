@@ -1,49 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import FormContainer from "../components/FormContainer";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { useRegisterMutation } from "../slices/usersApiSlice";
-import { setCredentials } from "../slices/authSlice";
-import { toast } from "react-toastify";
+import { useAddUserMutation } from "../slices/adminApiSlice";
 import Loader from "../components/Loader";
-import Oauth from "../components/Oauth";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
-const RegisterScreen = () => {
+const AddUser = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [addUser, { isLoading }] = useAddUserMutation();
+
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const { userInfo } = useSelector((state) => state.auth);
-  const [register, { isLoading }] = useRegisterMutation();
-
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/");
-    }
-  }, [navigate, userInfo]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       toast.error("Password do no match");
     } else if (!name || !email || !password || !confirmPassword) {
-      toast.error("All Fields mustbe filled");
+      toast.error("Fields can't be empty");
     } else if (password.length < 8) {
-      toast.error("Password must be 8 charecters");
-    } else if (
-      !email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
-    ) {
-      toast.error("Please enter a valid email address!");
+      toast.error("Password should be 8 charecters");
     } else {
       try {
-        const res = await register({ name, email, password }).unwrap();
-        dispatch(setCredentials({ ...res }));
-        navigate("/");
+        const res = await addUser({ name, email, password }).unwrap();
+        navigate("/admin/dashboard");
       } catch (error) {
         toast.error(error?.data?.message || error.error);
       }
@@ -52,7 +36,7 @@ const RegisterScreen = () => {
 
   return (
     <FormContainer>
-      <h1>Sign Up</h1>
+      <h1>Add User</h1>
 
       <Form onSubmit={submitHandler}>
         <Form.Group className="my-2" controlId="name">
@@ -95,18 +79,12 @@ const RegisterScreen = () => {
         {isLoading && <Loader />}
         <div className="d-grid gap-2">
           <Button type="submit" variant="primary" className="mt-3">
-            Sign Up
+            Add User
           </Button>
         </div>
-        <Oauth />
-        <Row className="py-3">
-          <Col>
-            Already have an account ? <Link to="/login">Login</Link>{" "}
-          </Col>
-        </Row>
       </Form>
     </FormContainer>
   );
 };
 
-export default RegisterScreen;
+export default AddUser;

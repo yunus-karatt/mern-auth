@@ -5,6 +5,7 @@ import { useGetUpdateUserDataMutation } from '../slices/adminApiSlice'
 import FormContainer from '../components/FormContainer'
 import { Button, Form } from 'react-bootstrap'
 import Loader from '../components/Loader'
+import { toast } from 'react-toastify'
 
 const UpdateUserData = () => {
 
@@ -29,6 +30,10 @@ const UpdateUserData = () => {
 
   const submitHandler=async(e)=>{
     e.preventDefault()
+    if(!name||!email){
+      toast.error("Fields can't be empty")
+      return
+    }
     await updateUser({email,name,_id:id})
     navigate('/admin/dashboard')
   }

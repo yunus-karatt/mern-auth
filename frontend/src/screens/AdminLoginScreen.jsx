@@ -9,14 +9,13 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
-
 function AdminLoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [adminLogin, { isLoading }] = useAdminLoginMutation();
 
-  const {adminInfo} = useSelector((state) => state.adminAuth);
+  const { adminInfo } = useSelector((state) => state.adminAuth);
   const dispatch = useDispatch();
   const navigate = useNavigate("");
 
@@ -28,6 +27,18 @@ function AdminLoginScreen() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    if (!email || !password) {
+      toast.error("Fields can't be empty");
+      return;
+    } else if (password.length < 8) {
+      toast.error("Password sholud be 8 charecters");
+      return;
+    } else if (
+      !email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+    ) {
+      toast.error("Please enter a valid email address!");
+      return;
+    }
     try {
       const res = await adminLogin({ email, password }).unwrap();
       dispatch(setAdminCredentials({ ...res }));

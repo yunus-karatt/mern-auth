@@ -44,7 +44,7 @@ function Dashboard() {
     setUsers(updatedState);
   };
   
-  const filterdUser=users.filter(user=>{
+  const filterdUser=users?.filter(user=>{
     const userName = user.name.toLowerCase();
     const userEmail = user.email;
     const searchValue = search.toLowerCase();
@@ -66,7 +66,7 @@ function Dashboard() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Link to="/admin/users/add-user">
+        <Link to="/admin/users/add-user" className="ms-auto">
           <Button className="bg-black border-black rounded-0 fw-bold ">
             ADD USER 
           </Button>
