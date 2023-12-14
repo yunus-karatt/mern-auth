@@ -16,6 +16,7 @@ const ProfileScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [file, setFile] = useState("");
   const [selectedImage, setSelectedImage] = useState("");
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -35,9 +36,20 @@ const ProfileScreen = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
+    if (!name || !email) {
+      toast.error("Email and name can't be empty");
+    } else if (showPasswordFields && !password) {
+      toast.error("Please enter new password ");
+    } else if (showPasswordFields && !confirmPassword ) {
+      toast.error("Please fill confirm password field");
+    }else if(showPasswordFields && confirmPassword.length<8){
+      toast.error("Password must be 8 charectors");
+
+    } 
+    else if (password !== confirmPassword) {
       toast.error("Password do no match");
-    } else {
+    } 
+    else {
       try {
         const formData = new FormData();
         formData.append("_id", userInfo._id);
@@ -48,6 +60,7 @@ const ProfileScreen = () => {
         const res = await updateProfile(formData).unwrap();
         dispatch(setCredentials({ ...res }));
         toast.success("Profile Updated");
+        setShowPasswordFields(false);
       } catch (error) {
         toast.error(error?.data?.message || error.error);
       }
@@ -68,6 +81,8 @@ const ProfileScreen = () => {
             src={
               selectedImage
                 ? selectedImage
+                : userInfo.avatar.includes("http")
+                ? userInfo.avatar
                 : import.meta.env.VITE_STATIC_SERVER + userInfo.avatar
             }
             roundedCircle
@@ -105,25 +120,36 @@ const ProfileScreen = () => {
             onChange={(e) => setEmail(e.target.value)}
           ></Form.Control>
         </Form.Group>
-        <Form.Group className="my-2" controlId="password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-        <Form.Group className="my-2" controlId="confirmPassword">
-          <Form.Label>Confirm Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Confirm password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+        <Button
+          className="btn btn-sm btn-secondary my-3"
+          onClick={() => setShowPasswordFields((prev) => !prev)}
+        >
+          {showPasswordFields ? "cancel" : "Change Password?"}
+        </Button>
+        {showPasswordFields && (
+          <>
+            <Form.Group className="my-2" controlId="password">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+            <Form.Group className="my-2" controlId="confirmPassword">
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Confirm password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+          </>
+        )}
         {isLoading && <Loader />}
+        <br />
         <Button type="submit" variant="primary" className="mt-3">
           update
         </Button>

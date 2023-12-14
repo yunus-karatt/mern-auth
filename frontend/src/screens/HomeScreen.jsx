@@ -1,12 +1,13 @@
-import React from 'react'
-import Hero from '../components/Hero'
+import React from "react";
+import Hero from "../components/Hero";
+import { useSelector } from "react-redux";
 
 const HomeScreen = () => {
   return (
     <>
-    <Hero/>
+      <Hero />
     </>
-  )
-}
+  );
+};
 
-export default HomeScreen
+export default HomeScreen;
